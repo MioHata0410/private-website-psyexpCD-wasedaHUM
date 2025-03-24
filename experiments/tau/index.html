@@ -31,7 +31,7 @@
     </div>
     
     <div id="experiment-screen" style="display: none;">
-        <video id="stimulus-video" width="1600" autoplay></video>
+        <video id="stimulus-video" height="900" autoplay></video>
         <div id="fixation-cross" style="display: none;">+</div>
     </div>
     
