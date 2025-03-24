@@ -13,6 +13,22 @@
         <input type="text" id="participant-name" required>
         <button id="start-button">開始</button>
     </div>
+        <div id="instruction-screen" style="display: none;">
+        <h2 id="instruction-title">練習試行</h2>
+        <p id="instruction-text">
+            この実験では、以下のような課題を行っていただきます：<br>
+            1. 白い線で構成された直線のダクトの中を前進する映像が表示されます。<br>
+            2. 映像開始から5秒後、ダクトの途中に白い壁が現れます。<br>
+            3. その後、ある時点で画面が暗転します。<br>
+            4. 暗転後、あなたが壁に「ぶつかる」と感じたタイミングでスペースキーを押してください。<br><br>
+            まずは5回の練習試行を行います。実験の流れに慣れていただくための練習ですので、リラックスして取り組んでください。<br><br>
+            <b>注意事項：</b><br>
+            * 画面の中央を注視してください。<br>
+            * できるだけ自然な反応を心がけてください。<br>
+            * 疲れを感じたら適宜休憩を取ってください。
+        </p>
+        <button id="instruction-button">次へ</button>
+    </div>
     
     <div id="experiment-screen" style="display: none;">
         <video id="stimulus-video" width="1600" autoplay></video>
