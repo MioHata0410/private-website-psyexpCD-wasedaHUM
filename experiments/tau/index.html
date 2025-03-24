@@ -13,7 +13,8 @@
         <input type="text" id="participant-name" required>
         <button id="start-button">開始</button>
     </div>
-        <div id="instruction-screen" style="display: none;">
+    
+    <div id="instruction-screen" style="display: none;">
         <h2 id="instruction-title">練習試行</h2>
         <p id="instruction-text">
             この実験では、以下のような課題を行っていただきます：<br>
@@ -42,11 +43,16 @@
             if (name) {
                 localStorage.setItem('participantName', name);
                 document.getElementById('start-screen').style.display = 'none';
-                document.getElementById('experiment-screen').style.display = 'block';
-                startExperiment();
+                document.getElementById('instruction-screen').style.display = 'block';
             } else {
                 alert('氏名を入力してください');
             }
+        });
+
+        document.getElementById('instruction-button').addEventListener('click', function() {
+            document.getElementById('instruction-screen').style.display = 'none';
+            document.getElementById('experiment-screen').style.display = 'block';
+            startExperiment();
         });
 
         function startExperiment() {
