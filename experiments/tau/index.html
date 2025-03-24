@@ -15,8 +15,7 @@
     </div>
     
     <div id="experiment-screen" style="display: none;">
-        <h2 id="instruction">実験中...</h2>
-        <video id="stimulus-video" width="800" autoplay></video>
+        <video id="stimulus-video" width="1600" autoplay></video>
         <div id="fixation-cross" style="display: none;">+</div>
     </div>
     
