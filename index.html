@@ -3,10 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>非公開ページ</title>
+    <title>ログイン</title>
 </head>
 <body>
     <h1>このページは早稲田大学人間科学部心理学実験の実験材料があるサイトです</h1>+
     <h1>このページはURLを知っている人だけが見れます</h1>
+</body>
+    <script>
+        function checkPassword() {
+            var password = document.getElementById("password").value;
+            if (password === "wasedahuman") {  // ここでパスワードを設定
+                window.location.href = "home.html"; // ホームページにリダイレクト
+            } else {
+                alert("パスワードが間違っています");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>パスワードを入力してください</h2>
+    <input type="password" id="password">
+    <button onclick="checkPassword()">ログイン</button>
 </body>
 </html>
