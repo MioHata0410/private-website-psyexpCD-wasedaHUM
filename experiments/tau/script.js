@@ -15,6 +15,16 @@ document.getElementById('instruction-button').addEventListener('click', function
     startExperiment();
 });
 
+document.addEventListener("keydown", function(event) {
+    if (event.key === "f") {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+});
+
 const practiceTrials = [
     { d: 8, b: 6.0 }, { d: 9, b: 6.5 }, { d: 10, b: 7.0 }, { d: 11, b: 7.5 }, { d: 8, b: 6.5 }
 ];
@@ -25,49 +35,8 @@ const mainTrials = [
     { d: 10, b: 6.0 }, { d: 10, b: 6.5 }, { d: 10, b: 7.0 }, { d: 10, b: 7.5 },
     { d: 11, b: 6.0 }, { d: 11, b: 6.5 }, { d: 11, b: 7.0 }, { d: 11, b: 7.5 }
 ];
-/* 全体のスタイルをリセット */
-body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-}
 
-/* 画面全体にフィットさせるためのスタイル */
-#experiment-screen {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* 十字の中央表示 */
-#fixation-cross {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 50px;
-    font-weight: bold;
-    color: white;
-    display: none;
-}
-
-/* 動画を中央に配置 */
-#stimulus-video {
-    position: fixed;
-    width: 80vw;
-    height: auto;
-    max-height: 80vh;
-}
-
-let trials = practiceTrials.slice(); // 最初は練習試行
+let trials = practiceTrials.slice();
 let trialIndex = 0;
 let responseTimes = [];
 let keyPressListener;
@@ -82,7 +51,7 @@ function runTrial() {
     if (trialIndex >= trials.length) {
         if (trials === practiceTrials) {
             alert("練習試行が終了しました。本番試行を開始します。");
-            trials = mainTrials.slice(); // 本番試行に切り替え
+            trials = mainTrials.slice();
             trialIndex = 0;
             setTimeout(runTrial, 1000);
             return;
@@ -94,29 +63,35 @@ function runTrial() {
 
     const videoData = trials[trialIndex];
     const videoElement = document.getElementById('stimulus-video');
-    const startTime = Date.now();
-
-    videoElement.src = `videos/tunnel_d${videoData.d}_b${videoData.b}.mp4`;
-    videoElement.play();
-
-    keyPressListener = function (event) {
-        if (event.code === 'Space') {
-            const reactionTime = Date.now() - startTime;
-            responseTimes.push({ d: videoData.d, b: videoData.b, time: reactionTime });
-            document.removeEventListener('keydown', keyPressListener);
-            setTimeout(runTrial, 1000);
-        }
-    };
-
-    document.addEventListener('keydown', keyPressListener);
-
+    const fixationCross = document.getElementById('fixation-cross');
+    
+    fixationCross.style.display = "block";
     setTimeout(() => {
-        document.removeEventListener('keydown', keyPressListener);
-        responseTimes.push({ d: videoData.d, b: videoData.b, time: "No response" });
-        setTimeout(runTrial, 1000);
-    }, 14000);
+        fixationCross.style.display = "none";
+        const startTime = Date.now();
 
-    trialIndex++;
+        videoElement.src = `videos/tunnel_d${videoData.d}_b${videoData.b}.mp4`;
+        videoElement.play();
+
+        keyPressListener = function (event) {
+            if (event.code === 'Space') {
+                const reactionTime = Date.now() - startTime;
+                responseTimes.push({ d: videoData.d, b: videoData.b, time: reactionTime });
+                document.removeEventListener('keydown', keyPressListener);
+                setTimeout(runTrial, 1000);
+            }
+        };
+
+        document.addEventListener('keydown', keyPressListener);
+
+        setTimeout(() => {
+            document.removeEventListener('keydown', keyPressListener);
+            responseTimes.push({ d: videoData.d, b: videoData.b, time: "No response" });
+            setTimeout(runTrial, 1000);
+        }, 14000);
+
+        trialIndex++;
+    }, 1000);
 }
 
 function saveResults() {
@@ -131,3 +106,4 @@ function saveResults() {
     document.body.appendChild(link);
     link.click();
 }
+
