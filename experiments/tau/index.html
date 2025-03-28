@@ -13,7 +13,7 @@
         <input type="text" id="participant-name" required>
         <button id="start-button">開始</button>
     </div>
-    
+
     <div id="instruction-screen" style="display: none;">
         <h2 id="instruction-title">練習試行</h2>
         <p id="instruction-text">
@@ -29,105 +29,5 @@
     </div>
 
     <script src="script.js"></script>
-</body>
- 
-    <script>
-        document.getElementById('start-button').addEventListener('click', function() {
-            const name = document.getElementById('participant-name').value.trim();
-            if (name) {
-                localStorage.setItem('participantName', name);
-                document.getElementById('start-screen').style.display = 'none';
-                document.getElementById('instruction-screen').style.display = 'block';
-            } else {
-                alert('氏名を入力してください');
-            }
-        });
-
-        document.getElementById('instruction-button').addEventListener('click', function() {
-            document.getElementById('instruction-screen').style.display = 'none';
-            document.getElementById('experiment-screen').style.display = 'block';
-            startExperiment(true); // 練習試行
-        });
-
-        function startExperiment(isPractice) {
-            const allVideos = [
-                { d: 8, b: 6.0 }, { d: 8, b: 6.5 }, { d: 8, b: 7.0 }, { d: 8, b: 7.5 },
-                { d: 9, b: 6.0 }, { d: 9, b: 6.5 }, { d: 9, b: 7.0 }, { d: 9, b: 7.5 },
-                { d: 10, b: 6.0 }, { d: 10, b: 6.5 }, { d: 10, b: 7.0 }, { d: 10, b: 7.5 },
-                { d: 11, b: 6.0 }, { d: 11, b: 6.5 }, { d: 11, b: 7.0 }, { d: 11, b: 7.5 }
-            ];
-            let trials;
-            if (isPractice) {
-                trials = allVideos.sort(() => Math.random() - 0.5).slice(0, 5);
-            } else {
-                trials = [...allVideos, ...allVideos, ...allVideos].sort(() => Math.random() - 0.5);
-            }
-            let trialIndex = 0;
-            let responseTimes = [];
-
-            function runTrial() {
-                if (trialIndex >= trials.length) {
-                    if (isPractice) {
-                        alert("練習試行が終了しました。本番試行を開始します。");
-                        startExperiment(false);
-                    } else {
-                        saveResults();
-                    }
-                    return;
-                }
-                const videoData = trials[trialIndex];
-                const videoElement = document.getElementById('stimulus-video');
-                const fixation = document.getElementById('fixation-cross');
-
-                videoElement.style.display = 'block';
-                fixation.style.display = 'none';
-                videoElement.src = `videos/tunnel_d${videoData.d}_b${videoData.b}.mp4`;
-                videoElement.play();
-                
-                let startTime = Date.now();
-                let responded = false;
-                
-                function onKeyPress(event) {
-                    if (event.code === 'Space' && !responded) {
-                        responded = true;
-                        responseTimes.push({ d: videoData.d, b: videoData.b, time: Date.now() - startTime });
-                        document.removeEventListener('keydown', onKeyPress);
-                        nextTrial();
-                    }
-                }
-                document.addEventListener('keydown', onKeyPress);
-                
-                setTimeout(() => {
-                    if (!responded) {
-                        document.removeEventListener('keydown', onKeyPress);
-                        nextTrial();
-                    }
-                }, 14000);
-
-                function nextTrial() {
-                    videoElement.style.display = 'none';
-                    fixation.style.display = 'block';
-                    setTimeout(() => {
-                        trialIndex++;
-                        runTrial();
-                    }, 1000);
-                }
-            }
-            runTrial();
-        }
-
-        function saveResults() {
-            let csvContent = "data:text/csv;charset=utf-8,d,b,time\n";
-            responseTimes.forEach(row => {
-                csvContent += `${row.d},${row.b},${row.time}\n`;
-            });
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "experiment_results.csv");
-            document.body.appendChild(link);
-            link.click();
-        }
-    </script>
 </body>
 </html>
