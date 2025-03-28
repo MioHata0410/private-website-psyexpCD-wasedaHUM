@@ -16,24 +16,13 @@
     
     <div id="instruction-screen" style="display: none;">
         <h2 id="instruction-title">練習試行</h2>
-        <p id="instruction-text">
-            この実験では、以下のような課題を行っていただきます：<br>
-            1. 白い線で構成された直線のダクトの中を前進する映像が表示されます。<br>
-            2. 映像開始から5秒後、ダクトの途中に白い壁が現れます。<br>
-            3. その後、ある時点で画面が暗転します。<br>
-            4. 暗転後、あなたが壁に「ぶつかる」と感じたタイミングでスペースキーを押してください。<br><br>
-            まずは5回の練習試行を行います。実験の流れに慣れていただくための練習ですので、リラックスして取り組んでください。<br><br>
-            <b>注意事項：</b><br>
-            * 画面の中央を注視してください。<br>
-            * できるだけ自然な反応を心がけてください。<br>
-            * 疲れを感じたら適宜休憩を取ってください。
-        </p>
+        <p id="instruction-text">まずは5回の練習試行を行います。リラックスして取り組んでください。</p>
         <button id="instruction-button">次へ</button>
     </div>
     
     <div id="experiment-screen" style="display: none;">
         <video id="stimulus-video" height="900" autoplay></video>
-        <div id="fixation-cross" style="display: none;">+</div>
+        <div id="fixation-cross" style="display: none; font-size: 50px;">+</div>
     </div>
     
     <script src="tau.js"></script>
@@ -52,52 +41,76 @@
         document.getElementById('instruction-button').addEventListener('click', function() {
             document.getElementById('instruction-screen').style.display = 'none';
             document.getElementById('experiment-screen').style.display = 'block';
-            startExperiment();
+            startExperiment(true); // 練習試行
         });
 
-        function startExperiment() {
-            const videos = [
+        function startExperiment(isPractice) {
+            const allVideos = [
                 { d: 8, b: 6.0 }, { d: 8, b: 6.5 }, { d: 8, b: 7.0 }, { d: 8, b: 7.5 },
                 { d: 9, b: 6.0 }, { d: 9, b: 6.5 }, { d: 9, b: 7.0 }, { d: 9, b: 7.5 },
                 { d: 10, b: 6.0 }, { d: 10, b: 6.5 }, { d: 10, b: 7.0 }, { d: 10, b: 7.5 },
                 { d: 11, b: 6.0 }, { d: 11, b: 6.5 }, { d: 11, b: 7.0 }, { d: 11, b: 7.5 }
             ];
+            let trials;
+            if (isPractice) {
+                trials = allVideos.sort(() => Math.random() - 0.5).slice(0, 5);
+            } else {
+                trials = [...allVideos, ...allVideos, ...allVideos].sort(() => Math.random() - 0.5);
+            }
             let trialIndex = 0;
             let responseTimes = [];
-            
+
             function runTrial() {
-                if (trialIndex >= videos.length) {
-                    saveResults();
+                if (trialIndex >= trials.length) {
+                    if (isPractice) {
+                        alert("練習試行が終了しました。本番試行を開始します。");
+                        startExperiment(false);
+                    } else {
+                        saveResults();
+                    }
                     return;
                 }
-                
-                const videoData = videos[trialIndex];
+                const videoData = trials[trialIndex];
                 const videoElement = document.getElementById('stimulus-video');
-                const startTime = Date.now();
-                
+                const fixation = document.getElementById('fixation-cross');
+
+                videoElement.style.display = 'block';
+                fixation.style.display = 'none';
                 videoElement.src = `videos/tunnel_d${videoData.d}_b${videoData.b}.mp4`;
                 videoElement.play();
                 
+                let startTime = Date.now();
+                let responded = false;
+                
                 function onKeyPress(event) {
-                    if (event.code === 'Space') {
-                        const reactionTime = Date.now() - startTime;
-                        responseTimes.push({ d: videoData.d, b: videoData.b, time: reactionTime });
+                    if (event.code === 'Space' && !responded) {
+                        responded = true;
+                        responseTimes.push({ d: videoData.d, b: videoData.b, time: Date.now() - startTime });
                         document.removeEventListener('keydown', onKeyPress);
-                        setTimeout(runTrial, 1000);
+                        nextTrial();
                     }
                 }
                 document.addEventListener('keydown', onKeyPress);
                 
                 setTimeout(() => {
-                    document.removeEventListener('keydown', onKeyPress);
-                    runTrial();
+                    if (!responded) {
+                        document.removeEventListener('keydown', onKeyPress);
+                        nextTrial();
+                    }
                 }, 14000);
-                
-                trialIndex++;
+
+                function nextTrial() {
+                    videoElement.style.display = 'none';
+                    fixation.style.display = 'block';
+                    setTimeout(() => {
+                        trialIndex++;
+                        runTrial();
+                    }, 1000);
+                }
             }
             runTrial();
         }
-        
+
         function saveResults() {
             let csvContent = "data:text/csv;charset=utf-8,d,b,time\n";
             responseTimes.forEach(row => {
