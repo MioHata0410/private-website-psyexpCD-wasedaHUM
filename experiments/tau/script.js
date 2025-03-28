@@ -35,7 +35,7 @@
         <div id="fixation-cross" style="display: none;">+</div>
     </div>
     
-    <script src="tau.js"></script>
+  
     <script>
         document.getElementById('start-button').addEventListener('click', function() {
             const name = document.getElementById('participant-name').value.trim();
