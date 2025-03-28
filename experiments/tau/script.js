@@ -25,6 +25,47 @@ const mainTrials = [
     { d: 10, b: 6.0 }, { d: 10, b: 6.5 }, { d: 10, b: 7.0 }, { d: 10, b: 7.5 },
     { d: 11, b: 6.0 }, { d: 11, b: 6.5 }, { d: 11, b: 7.0 }, { d: 11, b: 7.5 }
 ];
+/* 全体のスタイルをリセット */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+}
+
+/* 画面全体にフィットさせるためのスタイル */
+#experiment-screen {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 十字の中央表示 */
+#fixation-cross {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    font-weight: bold;
+    color: white;
+    display: none;
+}
+
+/* 動画を中央に配置 */
+#stimulus-video {
+    position: fixed;
+    width: 80vw;
+    height: auto;
+    max-height: 80vh;
+}
 
 let trials = practiceTrials.slice(); // 最初は練習試行
 let trialIndex = 0;
