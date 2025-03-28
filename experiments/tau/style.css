@@ -45,7 +45,14 @@ body, html {
 /* 動画を中央に配置 */
 #stimulus-video {
     position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     width: 80vw;
     height: auto;
     max-height: 80vh;
+}
+
+#instruction-screen {
+    color: white;
 }
