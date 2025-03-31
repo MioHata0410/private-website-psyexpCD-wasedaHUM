@@ -26,38 +26,43 @@ document.addEventListener("keydown", function(event) {
 });
 
 const practiceTrials = [
-    { d: 8, b: 6 }, { d: 9, b: 6_5 }, { d: 10, b: 7 }, { d: 11, b: 7_5 }, { d: 8, b: 6 }
+    { d: 8, b: 6.0 }, { d: 9, b: 6.5 }, { d: 10, b: 7.0 }, { d: 11, b: 7.5 }, { d: 8, b: 6.5 }
 ];
 
-const mainTrials = [
-    { d: 8, b: 6 }, { d: 8, b: 6_5 }, { d: 8, b: 7 }, { d: 8, b: 7_5 },
-    { d: 9, b: 6 }, { d: 9, b: 6_5 }, { d: 9, b: 7 }, { d: 9, b: 7_5 },
-    { d: 10, b: 6 }, { d: 10, b: 6_5 }, { d: 10, b: 7 }, { d: 10, b: 7_5 },
-    { d: 11, b: 6 }, { d: 11, b: 6_5 }, { d: 11, b: 7 }, { d: 11, b: 7_5 }
-];
+const mainTrials = [...Array(3)].flatMap(() => [
+    { d: 8, b: 6.0 }, { d: 8, b: 6.5 }, { d: 8, b: 7.0 }, { d: 8, b: 7.5 },
+    { d: 9, b: 6.0 }, { d: 9, b: 6.5 }, { d: 9, b: 7.0 }, { d: 9, b: 7.5 },
+    { d: 10, b: 6.0 }, { d: 10, b: 6.5 }, { d: 10, b: 7.0 }, { d: 10, b: 7.5 },
+    { d: 11, b: 6.0 }, { d: 11, b: 6.5 }, { d: 11, b: 7.0 }, { d: 11, b: 7.5 }
+]).sort(() => Math.random() - 0.5);
 
-let trials = practiceTrials.slice();
+let trials = [...practiceTrials];
 let trialIndex = 0;
-let allResponseTimes = [];
+let responseTimes = [];
 let keyPressListener;
 
 function startExperiment() {
     trialIndex = 0;
-    allResponseTimes = [];
+    responseTimes = [];
     runTrial();
 }
 
 function runTrial() {
     if (trialIndex >= trials.length) {
-        if (trials === practiceTrials) {
+        if (trials.length === practiceTrials.length) {
             alert("練習試行が終了しました。本番試行を開始します。");
-            allResponseTimes = allResponseTimes.concat(responseTimes);
-            trials = mainTrials.slice();
+            document.getElementById('instruction-screen').style.display = 'block';
+            document.getElementById('experiment-screen').style.display = 'none';
+            document.getElementById('instruction-text').innerText = "本番試行\nこの実験では..."; // 本番試行の説明
+            trials = [...mainTrials];
             trialIndex = 0;
-            setTimeout(runTrial, 1000);
+            document.getElementById('instruction-button').addEventListener('click', function () {
+                document.getElementById('instruction-screen').style.display = 'none';
+                document.getElementById('experiment-screen').style.display = 'block';
+                runTrial();
+            }, { once: true });
             return;
         } else {
-            allResponseTimes = allResponseTimes.concat(responseTimes);
             saveResults();
             return;
         }
@@ -66,43 +71,48 @@ function runTrial() {
     const videoData = trials[trialIndex];
     const videoElement = document.getElementById('stimulus-video');
     const fixationCross = document.getElementById('fixation-cross');
-
-    // ③ 修正: 十字が表示されている間は動画を表示しない
+    
     fixationCross.style.display = "block";
     setTimeout(() => {
         fixationCross.style.display = "none";
+        const startTime = Date.now();
 
-        setTimeout(() => { // 100ms 後に動画を表示
-            videoElement.src = `videos/tunnel_d${videoData.d}_b${videoData.b}.mp4`.replace(".", "_");
-            videoElement.play();
+        videoElement.src = `videos/tunnel_d${videoData.d}_b${videoData.b}.mp4`;
+        videoElement.load();
+        videoElement.play();
 
-            const startTime = Date.now();
-            keyPressListener = function (event) {
-                if (event.code === 'Space') {
-                    const reactionTime = Date.now() - startTime;
-                    allResponseTimes.push({ d: videoData.d, b: videoData.b, time: reactionTime });
-                    document.removeEventListener('keydown', keyPressListener);
-                    setTimeout(runTrial, 1000);
-                }
-            };
-
-            document.addEventListener('keydown', keyPressListener);
-
-            setTimeout(() => {
+        keyPressListener = function (event) {
+            if (event.code === 'Space') {
+                const reactionTime = Date.now() - startTime;
+                responseTimes.push({ d: videoData.d, b: videoData.b, time: reactionTime });
                 document.removeEventListener('keydown', keyPressListener);
-                allResponseTimes.push({ d: videoData.d, b: videoData.b, time: "No response" });
-                setTimeout(runTrial, 1000);
-            }, 14000);
+                nextTrial();
+            }
+        };
 
-            trialIndex++;
-        }, 100); // ここで動画再生を100ms遅らせる
-    }, 1000); // 十字を1秒間表示
+        document.addEventListener('keydown', keyPressListener);
+
+        setTimeout(() => {
+            document.removeEventListener('keydown', keyPressListener);
+            responseTimes.push({ d: videoData.d, b: videoData.b, time: "No response" });
+            nextTrial();
+        }, 14000);
+
+        trialIndex++;
+    }, 1000);
 }
 
-// ④ 修正: CSV を 1 回だけダウンロード
+function nextTrial() {
+    document.getElementById('fixation-cross').style.display = "block";
+    setTimeout(() => {
+        document.getElementById('fixation-cross').style.display = "none";
+        runTrial();
+    }, 1000);
+}
+
 function saveResults() {
     let csvContent = "data:text/csv;charset=utf-8,d,b,time\n";
-    allResponseTimes.forEach(row => {
+    responseTimes.forEach(row => {
         csvContent += `${row.d},${row.b},${row.time}\n`;
     });
     const encodedUri = encodeURI(csvContent);
