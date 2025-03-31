@@ -9,11 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const participantNameInput = document.getElementById("participant-name");
     const startButton = document.getElementById("start-button");
     const instructionButton = document.getElementById("instruction-button");
+    const mainInstructionButton = document.getElementById("main-instruction-button");
 
     let trialIndex = 0;
     let trials = [];
     let responseTimes = [];
     let startTime;
+    let trialTimeout;
     
     const videoNames = [
         "tunnel_d8_b6.mp4", "tunnel_d8_b6_5.mp4", "tunnel_d8_b7.mp4", "tunnel_d8_b7_5.mp4",
@@ -37,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function startPractice() {
-        trials = shuffleArray5([...videoNames]);
+        trials = shuffleArray(videoNames).slice(0, 5);
         trialIndex = 0;
         responseTimes = [];
         showFixationAndPlayVideo();
@@ -76,11 +78,12 @@ document.addEventListener("DOMContentLoaded", () => {
         startTime = Date.now();
         
         document.addEventListener("keydown", handleKeyPress);
-        setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
+        trialTimeout = setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
     }
 
     function handleKeyPress(event) {
         if (event.code === "Space") {
+            clearTimeout(trialTimeout); // タイムアウトをクリア
             let responseTime = Date.now() - startTime;
             responseTimes.push({ trial: trials[trialIndex], time: responseTime });
             document.removeEventListener("keydown", handleKeyPress);
@@ -106,15 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-    
-    function shuffleArray5(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-            array = array[0:4]
         }
         return array;
     }
