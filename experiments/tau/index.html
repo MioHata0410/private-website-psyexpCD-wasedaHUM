@@ -3,35 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>タウを体験してみよう</title>
+    <title>実験</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="instruction-screen">
-        <p>
-            この実験では、以下のような課題を行っていただきます：<br>
-            1. 白い線で構成された直線のダクトの中を前進する映像が表示されます。<br>
-            2. 映像開始から5秒後、ダクトの途中に白い壁が現れます。<br>
-            3. その後、ある時点で画面が暗転します。<br>
-            4. 暗転後、あなたが壁に「ぶつかる」と感じたタイミングでスペースキーを押してください。<br>
-            まずは5回の練習試行を行います。リラックスして取り組んでください。
-        </p>
+    <div id="start-screen">
+        <h1>実験</h1>
+        <p>氏名を入力してください：</p>
+        <input type="text" id="participant-name">
         <button id="start-button">開始</button>
     </div>
     
+    <div id="instruction-screen" style="display: none;">
+        <h2>練習試行</h2>
+        <p>この実験では、以下のような課題を行っていただきます：</p>
+        <ul>
+            <li>白い線で構成された直線のダクトの中を前進する映像が表示されます。</li>
+            <li>映像開始から5秒後、ダクトの途中に白い壁が現れます。</li>
+            <li>その後、ある時点で画面が暗転します。</li>
+            <li>暗転後、あなたが壁に「ぶつかる」と感じたタイミングでスペースキーを押してください。</li>
+        </ul>
+        <p>まずは5回の練習試行を行います。 実験の流れに慣れていただくための練習ですので、リラックスして取り組んでください。</p>
+        <button id="instruction-button">練習試行を開始</button>
+    </div>
+    
     <div id="main-instruction-screen" style="display: none;">
-        <p>
-            練習が終了しました。本番試行に移ります。<br>
-            本番試行では、16条件×3セットの計48試行を行います。<br>
-            リラックスして取り組んでください。
-            <br>
-            <b>「開始」ボタンを押すと実験が始まります。</b>
-        </p>
-        <button id="main-instruction-button">開始</button>
+        <h2>本番試行</h2>
+        <p>練習が終了しました。本番試行に移ります。</p>
+        <p>この実験では、以下のような課題を行っていただきます：</p>
+        <ul>
+            <li>白い線で構成された直線のダクトの中を前進する映像が表示されます。</li>
+            <li>映像開始から5秒後、ダクトの途中に白い壁が現れます。</li>
+            <li>その後、ある時点で画面が暗転します。</li>
+            <li>暗転後、あなたが壁に「ぶつかる」と感じたタイミングでスペースキーを押してください。</li>
+        </ul>
+        <button id="main-instruction-button">本番試行を開始</button>
     </div>
     
     <div id="experiment-screen" style="display: none;">
-        <video id="stimulus-video" width="800" autoplay></video>
+        <div id="fixation-cross">+</div>
+        <video id="stimulus-video" width="100%" height="auto"></video>
     </div>
     
     <script src="script.js"></script>
