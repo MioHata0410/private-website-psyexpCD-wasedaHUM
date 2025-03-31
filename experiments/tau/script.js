@@ -11,9 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const instructionButton = document.getElementById("instruction-button");
     const mainInstructionButton = document.getElementById("main-instruction-button");
 
+    let trialIndexP = 0;
+    let trialsP = [];
+    let responseTimesP = [];
     let trialIndex = 0;
     let trials = [];
     let responseTimes = [];
+
     let startTime;
     let trialTimeout;
     
@@ -43,9 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //練習試行をスタートさせるための関数
     function startPractice() {
-        trials = shuffleArray(videoNames).slice(0, 5);
-        trialIndex = 0;
-        responseTimes = [];
+        trialsP = shuffleArray(videoNames).slice(0, 5);
+        trialIndexP = 0;
+        responseTimesP = [];
         showFixationAndPlayVideoP();
     }
 
@@ -85,18 +89,18 @@ document.addEventListener("DOMContentLoaded", () => {
     
     //練習試行playVideo
     function playVideoP() {
-        if (trialIndex >= trials.length) {
+        if (trialIndexP >= trialsP.length) {
             endExperiment();
             return;
         }
         
-        stimulusVideo.src = `videos/${trials[trialIndex]}`;
+        stimulusVideo.src = `videos/${trialsP[trialIndexP]}`;
         stimulusVideo.load();
         stimulusVideo.play();
         startTime = Date.now();
         
         document.addEventListener("keydown", handleKeyPressP);
-        trialTimeout = setTimeout(nextTrialP, 14000); // 最大14秒で次の試行へ
+        trialTimeoutP = setTimeout(nextTrialP, 14000); // 最大14秒で次の試行へ
     }
 
     //本番試行playVideo
@@ -118,10 +122,10 @@ document.addEventListener("DOMContentLoaded", () => {
     //練習試行キー入力
     function handleKeyPressP(event) {
         if (event.code === "Space") {
-            clearTimeout(trialTimeout); // タイムアウトをクリア
+            clearTimeout(trialTimeoutP); // タイムアウトをクリア
             let responseTime = Date.now() - startTime;
-            responseTimes.push({ trial: trials[trialIndex], time: responseTime });
-            document.removeEventListener("keydown", handleKeyPress);
+            responseTimesP.push({ trial: trialsP[trialIndexP], time: responseTimeP });
+            document.removeEventListener("keydown", handleKeyPressP);
             nextTrialP();
         }
     }
@@ -139,8 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //練習試行用のnextTrial
     function nextTrialP() {
-        trialIndex++;
-        if (trialIndex < trials.length) {
+        trialIndexP++;
+        if (trialIndexP < trialsP.length) {
             fixationCross.style.display = "block"; // ここで再表示
             showFixationAndPlayVideoP();
         } else {
