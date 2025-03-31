@@ -7,27 +7,33 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="start-screen">
-        <h1>タウを体験してみよう</h1>
-        <label for="participant-name">氏名を入力してください：</label>
-        <input type="text" id="participant-name" required>
+    <div id="instruction-screen">
+        <p>
+            この実験では、以下のような課題を行っていただきます：<br>
+            1. 白い線で構成された直線のダクトの中を前進する映像が表示されます。<br>
+            2. 映像開始から5秒後、ダクトの途中に白い壁が現れます。<br>
+            3. その後、ある時点で画面が暗転します。<br>
+            4. 暗転後、あなたが壁に「ぶつかる」と感じたタイミングでスペースキーを押してください。<br>
+            まずは5回の練習試行を行います。リラックスして取り組んでください。
+        </p>
         <button id="start-button">開始</button>
     </div>
-
-    <div id="instruction-screen" style="display: none;">
-        <h2 id="instruction-title">練習試行</h2>
-        <p id="instruction-text">
-            画面を注視し、スペースキーを押すタイミングを測定します。<br>
-            **Fキーを押すと全画面モードになります！**
+    
+    <div id="main-instruction-screen" style="display: none;">
+        <p>
+            練習が終了しました。本番試行に移ります。<br>
+            本番試行では、16条件×3セットの計48試行を行います。<br>
+            リラックスして取り組んでください。
+            <br>
+            <b>「開始」ボタンを押すと実験が始まります。</b>
         </p>
-        <button id="instruction-button">次へ</button>
+        <button id="main-instruction-button">開始</button>
     </div>
-
+    
     <div id="experiment-screen" style="display: none;">
-        <div id="fixation-cross">+</div>
-        <video id="stimulus-video" autoplay></video>
+        <video id="stimulus-video" width="800" autoplay></video>
     </div>
-
+    
     <script src="script.js"></script>
 </body>
 </html>
