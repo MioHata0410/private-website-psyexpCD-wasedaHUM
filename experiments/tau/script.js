@@ -33,17 +33,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     instructionButton.addEventListener("click", () => {
         instructionScreen.style.display = "none";
-        startExperiment();
+        startPractice();
     });
 
-    function startExperiment() {
-        trials = shuffleArray([...videoNames]);
+    function startPractice() {
+        trials = shuffleArray5([...videoNames]);
         trialIndex = 0;
         responseTimes = [];
         showFixationAndPlayVideo();
     }
-
-    instructionButton.addEventListener("click", () => {
+    
+    mainInstructionButton.addEventListener("click", () => {
         mainInstructionScreen.style.display = "none";
         startExperiment();
     });
@@ -55,6 +55,13 @@ document.addEventListener("DOMContentLoaded", () => {
             fixationCross.style.display = "none";
             playVideo();
         }, 2000);
+    }
+
+    function startExperiment() {
+        trials = shuffleArray([...videoNames]);
+        trialIndex = 0;
+        responseTimes = [];
+        showFixationAndPlayVideo();
     }
 
     function playVideo() {
@@ -99,6 +106,15 @@ document.addEventListener("DOMContentLoaded", () => {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+    
+    function shuffleArray5(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+            array = array[0:4]
         }
         return array;
     }
