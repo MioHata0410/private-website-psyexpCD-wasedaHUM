@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let startTime;
     let trialTimeout;
+    let trialTimeoutP; // 追加
+
     
     //ビデオの読み込み
     const videoNames = [
@@ -123,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function handleKeyPressP(event) {
         if (event.code === "Space") {
             clearTimeout(trialTimeoutP); // タイムアウトをクリア
-            let responseTime = Date.now() - startTime;
+            let responseTimeP = Date.now() - startTime;
             responseTimesP.push({ trial: trialsP[trialIndexP], time: responseTimeP });
             document.removeEventListener("keydown", handleKeyPressP);
             nextTrialP();
@@ -141,27 +143,31 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    //練習試行用のnextTrial
     function nextTrialP() {
         trialIndexP++;
         if (trialIndexP < trialsP.length) {
-            fixationCross.style.display = "block"; // ここで再表示
-            showFixationAndPlayVideoP();
+            setTimeout(() => {
+                fixationCross.style.display = "block";
+                showFixationAndPlayVideoP();
+            }, 500); // 0.5秒遅延させることで、前の試行との区切りを明確に
         } else {
             mainInstructionScreen.style.display = "block";
-            mainInstructionButton.style.display = "block"; // ボタンを表示
+            mainInstructionButton.style.display = "block";
         }
     }
-    //本番試行用のnextTrial
+    
     function nextTrial() {
         trialIndex++;
         if (trialIndex < trials.length) {
-            fixationCross.style.display = "block"; // ここで再表示
-            showFixationAndPlayVideo();
+            setTimeout(() => {
+                fixationCross.style.display = "block";
+                showFixationAndPlayVideo();
+            }, 500);
         } else {
             endExperiment();
         }
     }
+
     
     function endExperiment() {
         console.log("Experiment finished", responseTimes);
