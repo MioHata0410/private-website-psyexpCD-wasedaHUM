@@ -90,12 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     //練習試行playVideo
-    function playVideoP() {
-        if (trialIndexP >= trialsP.length) {
-            endExperiment();
-            return;
-        }
-        
+    function playVideoP() {        
         stimulusVideo.src = `videos/${trialsP[trialIndexP]}`;
         stimulusVideo.load();
         stimulusVideo.play();
@@ -106,12 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     //本番試行playVideo
-    function playVideo() {
-        if (trialIndex >= trials.length) {
-            endExperiment();
-            return;
-        }
-        
+    function playVideo() {        
         stimulusVideo.src = `videos/${trials[trialIndex]}`;
         stimulusVideo.load();
         stimulusVideo.play();
