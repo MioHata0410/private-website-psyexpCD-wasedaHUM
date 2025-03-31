@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fixationCross.style.display = "block";
         setTimeout(() => {
             fixationCross.style.display = "none";
-            playVideo();
+            playVideoP();
         }, 2000);
     }
     
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
         stimulusVideo.play();
         startTime = Date.now();
         
-        document.addEventListener("keydown", handleKeyPress);
+        document.addEventListener("keydown", handleKeyPressP);
         trialTimeout = setTimeout(nextTrialP, 14000); // 最大14秒で次の試行へ
     }
 
@@ -115,7 +115,18 @@ document.addEventListener("DOMContentLoaded", () => {
         trialTimeout = setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
     }
     
-    //ここは共通かな？
+    //練習試行キー入力
+    function handleKeyPressP(event) {
+        if (event.code === "Space") {
+            clearTimeout(trialTimeout); // タイムアウトをクリア
+            let responseTime = Date.now() - startTime;
+            responseTimes.push({ trial: trials[trialIndex], time: responseTime });
+            document.removeEventListener("keydown", handleKeyPress);
+            nextTrialP();
+        }
+    }
+
+    //本番試行キー入力
     function handleKeyPress(event) {
         if (event.code === "Space") {
             clearTimeout(trialTimeout); // タイムアウトをクリア
