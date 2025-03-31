@@ -1,47 +1,38 @@
 document.getElementById('start-button').addEventListener('click', function () {
-    const name = document.getElementById('participant-name').value.trim();
-    if (name) {
-        localStorage.setItem('participantName', name);
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('instruction-screen').style.display = 'block';
-    } else {
-        alert('氏名を入力してください');
-    }
-});
-
-document.getElementById('instruction-button').addEventListener('click', function () {
     document.getElementById('instruction-screen').style.display = 'none';
     document.getElementById('experiment-screen').style.display = 'block';
     startExperiment();
 });
 
-document.addEventListener("keydown", function(event) {
-    if (event.key === "f") {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } else {
-            document.exitFullscreen();
-        }
-    }
+document.getElementById('main-instruction-button').addEventListener('click', function () {
+    document.getElementById('main-instruction-screen').style.display = 'none';
+    document.getElementById('experiment-screen').style.display = 'block';
+    startMainExperiment();
 });
 
 const practiceTrials = [
     { d: 8, b: 6.0 }, { d: 9, b: 6.5 }, { d: 10, b: 7.0 }, { d: 11, b: 7.5 }, { d: 8, b: 6.5 }
 ];
 
-const mainTrials = [...Array(3)].flatMap(() => [
+const mainTrials = [
     { d: 8, b: 6.0 }, { d: 8, b: 6.5 }, { d: 8, b: 7.0 }, { d: 8, b: 7.5 },
     { d: 9, b: 6.0 }, { d: 9, b: 6.5 }, { d: 9, b: 7.0 }, { d: 9, b: 7.5 },
     { d: 10, b: 6.0 }, { d: 10, b: 6.5 }, { d: 10, b: 7.0 }, { d: 10, b: 7.5 },
     { d: 11, b: 6.0 }, { d: 11, b: 6.5 }, { d: 11, b: 7.0 }, { d: 11, b: 7.5 }
-]).sort(() => Math.random() - 0.5);
+];
 
-let trials = [...practiceTrials];
-let trialIndex = 0;
-let responseTimes = [];
-let keyPressListener;
+let trials, trialIndex, responseTimes, keyPressListener;
 
 function startExperiment() {
+    trials = [...practiceTrials];
+    trialIndex = 0;
+    responseTimes = [];
+    runTrial();
+}
+
+function startMainExperiment() {
+    trials = [...mainTrials, ...mainTrials, ...mainTrials];
+    shuffleArray(trials);
     trialIndex = 0;
     responseTimes = [];
     runTrial();
@@ -50,64 +41,38 @@ function startExperiment() {
 function runTrial() {
     if (trialIndex >= trials.length) {
         if (trials.length === practiceTrials.length) {
-            alert("練習試行が終了しました。本番試行を開始します。");
-            document.getElementById('instruction-screen').style.display = 'block';
             document.getElementById('experiment-screen').style.display = 'none';
-            document.getElementById('instruction-text').innerText = "本番試行\nこの実験では..."; // 本番試行の説明
-            trials = [...mainTrials];
-            trialIndex = 0;
-            document.getElementById('instruction-button').addEventListener('click', function () {
-                document.getElementById('instruction-screen').style.display = 'none';
-                document.getElementById('experiment-screen').style.display = 'block';
-                runTrial();
-            }, { once: true });
-            return;
-        } else {
-            saveResults();
+            document.getElementById('main-instruction-screen').style.display = 'block';
             return;
         }
+        saveResults();
+        return;
     }
 
     const videoData = trials[trialIndex];
     const videoElement = document.getElementById('stimulus-video');
-    const fixationCross = document.getElementById('fixation-cross');
-    
-    fixationCross.style.display = "block";
-    setTimeout(() => {
-        fixationCross.style.display = "none";
-        const startTime = Date.now();
+    const startTime = Date.now();
 
-        videoElement.src = `videos/tunnel_d${videoData.d}_b${videoData.b}.mp4`;
-        videoElement.load();
-        videoElement.play();
+    videoElement.src = `videos/tunnel_d${videoData.d}_b${videoData.b}.mp4`;
+    videoElement.play();
 
-        keyPressListener = function (event) {
-            if (event.code === 'Space') {
-                const reactionTime = Date.now() - startTime;
-                responseTimes.push({ d: videoData.d, b: videoData.b, time: reactionTime });
-                document.removeEventListener('keydown', keyPressListener);
-                nextTrial();
-            }
-        };
-
-        document.addEventListener('keydown', keyPressListener);
-
-        setTimeout(() => {
+    keyPressListener = function (event) {
+        if (event.code === 'Space') {
+            const reactionTime = Date.now() - startTime;
+            responseTimes.push({ d: videoData.d, b: videoData.b, time: reactionTime });
             document.removeEventListener('keydown', keyPressListener);
-            responseTimes.push({ d: videoData.d, b: videoData.b, time: "No response" });
-            nextTrial();
-        }, 14000);
-
-        trialIndex++;
-    }, 1000);
-}
-
-function nextTrial() {
-    document.getElementById('fixation-cross').style.display = "block";
+            trialIndex++;
+            setTimeout(runTrial, 1000);
+        }
+    };
+    
+    document.addEventListener('keydown', keyPressListener);
     setTimeout(() => {
-        document.getElementById('fixation-cross').style.display = "none";
-        runTrial();
-    }, 1000);
+        document.removeEventListener('keydown', keyPressListener);
+        responseTimes.push({ d: videoData.d, b: videoData.b, time: "No response" });
+        trialIndex++;
+        setTimeout(runTrial, 1000);
+    }, 14000);
 }
 
 function saveResults() {
@@ -121,4 +86,11 @@ function saveResults() {
     link.setAttribute("download", "experiment_results.csv");
     document.body.appendChild(link);
     link.click();
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
