@@ -19,7 +19,7 @@ body, html {
     align-items: center;
     background-color: black;
 }
-
+/* 
 /* 画面全体にフィットさせるためのスタイル */
 #experiment-screen {
     position: fixed;
@@ -29,7 +29,7 @@ body, html {
     justify-content: center;
     align-items: center;
 }
-
+ */
 /* 十字の中央表示 */
 #fixation-cross {
     position: fixed;
