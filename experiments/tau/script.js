@@ -55,6 +55,53 @@ document.addEventListener("DOMContentLoaded", () => {
         showFixationAndPlayVideoP();
     }
 
+    //練習試行のshowFixationAndPlayVide
+    function showFixationAndPlayVideoP() {
+        practiceScreen.style.display = "block";
+        fixationCross.style.display = "block";
+        setTimeout(() => {
+            fixationCross.style.display = "none";
+            playVideoP();
+        }, 2000);
+    }
+    
+    //練習試行キー入力
+    function handleKeyPressP(event) {
+        if (event.code === "Space") {
+            clearTimeout(trialTimeoutP); // タイムアウトをクリア
+            let responseTimeP = Date.now() - startTime;
+            responseTimesP.push({ trial: trialsP[trialIndexP], time: responseTimeP });
+            document.removeEventListener("keydown", handleKeyPressP);
+            nextTrialP();
+        }
+    }
+    
+    //練習試行playVideo
+    function playVideoP() {        
+        stimulusVideo.src = `videos/${trialsP[trialIndexP]}`;
+        stimulusVideo.load();
+        stimulusVideo.play();
+        startTime = Date.now();
+
+        document.removeEventListener("keydown", handleKeyPressP); // ← 重複を防ぐ
+        document.addEventListener("keydown", handleKeyPressP);
+        trialTimeoutP = setTimeout(nextTrialP, 14000); // 最大14秒で次の試行へ
+    }
+
+    //練習試行ネクストトライアル
+    function nextTrialP() {
+        trialIndexP++;
+        if (trialIndexP < trialsP.length) {
+                fixationCross.style.display = "block";
+                showFixationAndPlayVideoP();
+        } else {
+            practiceScreen.style.display = "none";  // ← 練習画面を非表示
+            mainInstructionScreen.style.display = "block";
+            mainInstructionButton.style.display = "block";
+            mainInstructionButton.disabled = false;  // ← 念のため有効化
+        }
+    }
+
     //本番試行教示文
     mainInstructionButton.addEventListener("click", () => {
         mainInstructionScreen.style.display = "none";
@@ -69,16 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
         showFixationAndPlayVideo();
     }
 
-    //練習試行のshowFixationAndPlayVide
-    function showFixationAndPlayVideoP() {
-        practiceScreen.style.display = "block";
-        fixationCross.style.display = "block";
-        setTimeout(() => {
-            fixationCross.style.display = "none";
-            playVideoP();
-        }, 2000);
-    }
-    
     //本番試行のshowFixationAndPlayVide
     function showFixationAndPlayVideo() {
         experimentScreen.style.display = "block";
@@ -88,40 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
             playVideo();
         }, 2000);
     }
-    
-    //練習試行playVideo
-    function playVideoP() {        
-        stimulusVideo.src = `videos/${trialsP[trialIndexP]}`;
-        stimulusVideo.load();
-        stimulusVideo.play();
-        startTime = Date.now();
-        
-        document.addEventListener("keydown", handleKeyPressP);
-        trialTimeoutP = setTimeout(nextTrialP, 14000); // 最大14秒で次の試行へ
-    }
-
-    //本番試行playVideo
-    function playVideo() {        
-        stimulusVideo.src = `videos/${trials[trialIndex]}`;
-        stimulusVideo.load();
-        stimulusVideo.play();
-        startTime = Date.now();
-        
-        document.addEventListener("keydown", handleKeyPress);
-        trialTimeout = setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
-    }
-    
-    //練習試行キー入力
-    function handleKeyPressP(event) {
-        if (event.code === "Space") {
-            clearTimeout(trialTimeoutP); // タイムアウトをクリア
-            let responseTimeP = Date.now() - startTime;
-            responseTimesP.push({ trial: trialsP[trialIndexP], time: responseTimeP });
-            document.removeEventListener("keydown", handleKeyPressP);
-            nextTrialP();
-        }
-    }
-
+ 
     //本番試行キー入力
     function handleKeyPress(event) {
         if (event.code === "Space") {
@@ -132,38 +136,34 @@ document.addEventListener("DOMContentLoaded", () => {
             nextTrial();
         }
     }
-
-    function nextTrialP() {
-        trialIndexP++;
-        if (trialIndexP < trialsP.length) {
-            setTimeout(() => {
-                fixationCross.style.display = "block";
-                showFixationAndPlayVideoP();
-            }, 500); // 0.5秒遅延させることで、前の試行との区切りを明確に
-        } else {
-            mainInstructionScreen.style.display = "block";
-            mainInstructionButton.style.display = "block";
-        }
+     
+    //本番試行playVideo
+    function playVideo() {        
+        stimulusVideo.src = `videos/${trials[trialIndex]}`;
+        stimulusVideo.load();
+        stimulusVideo.play();
+        startTime = Date.now();
+        
+        document.removeEventListener("keydown", handleKeyPress); // ← 重複を防ぐ
+        document.addEventListener("keydown", handleKeyPress);
+        trialTimeout = setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
     }
-    
+   
     function nextTrial() {
         trialIndex++;
         if (trialIndex < trials.length) {
-            setTimeout(() => {
                 fixationCross.style.display = "block";
                 showFixationAndPlayVideo();
-            }, 500);
         } else {
             endExperiment();
         }
     }
-
     
     function endExperiment() {
         console.log("Experiment finished", responseTimes);
         alert("実験終了。データを保存してください。");
     }
-
+   
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
