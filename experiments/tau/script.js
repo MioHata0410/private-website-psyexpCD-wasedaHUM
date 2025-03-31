@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let startTime;
     let trialTimeout;
     
+    //ビデオの読み込み
     const videoNames = [
         "tunnel_d8_b6.mp4", "tunnel_d8_b6_5.mp4", "tunnel_d8_b7.mp4", "tunnel_d8_b7_5.mp4",
         "tunnel_d9_b6.mp4", "tunnel_d9_b6_5.mp4", "tunnel_d9_b7.mp4", "tunnel_d9_b7_5.mp4",
@@ -24,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "tunnel_d11_b6.mp4", "tunnel_d11_b6_5.mp4", "tunnel_d11_b7.mp4", "tunnel_d11_b7_5.mp4"
     ];
     
+    //最初の画面
     startButton.addEventListener("click", () => {
         if (participantNameInput.value.trim() === "") {
             alert("名前を入力してください。");
@@ -33,30 +35,45 @@ document.addEventListener("DOMContentLoaded", () => {
         instructionScreen.style.display = "block";
     });
 
+    //練習試行教示文
     instructionButton.addEventListener("click", () => {
         instructionScreen.style.display = "none";
         startPractice();
     });
 
+    //練習試行をスタートさせるための関数
     function startPractice() {
         trials = shuffleArray(videoNames).slice(0, 5);
         trialIndex = 0;
         responseTimes = [];
-        showFixationAndPlayVideo();
+        showFixationAndPlayVideoP();
     }
-    
+
+    //本番試行教示文
     mainInstructionButton.addEventListener("click", () => {
         mainInstructionScreen.style.display = "none";
         startExperiment();
     });
     
+    //本番試行をスタートさせるための関数
     function startExperiment() {
         trials = shuffleArray(videoNames);
         trialIndex = 0;
         responseTimes = [];
         showFixationAndPlayVideo();
     }
+
+    //練習試行のshowFixationAndPlayVide
+    function showFixationAndPlayVideoP() {
+        practiceScreen.style.display = "block";
+        fixationCross.style.display = "block";
+        setTimeout(() => {
+            fixationCross.style.display = "none";
+            playVideo();
+        }, 2000);
+    }
     
+    //本番試行のshowFixationAndPlayVide
     function showFixationAndPlayVideo() {
         experimentScreen.style.display = "block";
         fixationCross.style.display = "block";
@@ -65,7 +82,24 @@ document.addEventListener("DOMContentLoaded", () => {
             playVideo();
         }, 2000);
     }
+    
+    //練習試行playVideo
+    function playVideoP() {
+        if (trialIndex >= trials.length) {
+            endExperiment();
+            return;
+        }
+        
+        stimulusVideo.src = `videos/${trials[trialIndex]}`;
+        stimulusVideo.load();
+        stimulusVideo.play();
+        startTime = Date.now();
+        
+        document.addEventListener("keydown", handleKeyPress);
+        trialTimeout = setTimeout(nextTrialP, 14000); // 最大14秒で次の試行へ
+    }
 
+    //本番試行playVideo
     function playVideo() {
         if (trialIndex >= trials.length) {
             endExperiment();
@@ -80,7 +114,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.addEventListener("keydown", handleKeyPress);
         trialTimeout = setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
     }
-
+    
+    //ここは共通かな？
     function handleKeyPress(event) {
         if (event.code === "Space") {
             clearTimeout(trialTimeout); // タイムアウトをクリア
@@ -91,6 +126,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    //練習試行用のnextTrial
+    function nextTrialP() {
+        trialIndex++;
+        if (trialIndex < trials.length) {
+            showFixationAndPlayVideoP();
+        } else {
+            mainInstructionScreen.style.display = "block";
+        }
+    }
+
+    //本番試行用のnextTrial
     function nextTrial() {
         trialIndex++;
         if (trialIndex < trials.length) {
@@ -99,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
             endExperiment();
         }
     }
-
+    
     function endExperiment() {
         console.log("Experiment finished", responseTimes);
         alert("実験終了。データを保存してください。");
