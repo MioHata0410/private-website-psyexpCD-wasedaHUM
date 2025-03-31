@@ -141,16 +141,18 @@ document.addEventListener("DOMContentLoaded", () => {
     function nextTrialP() {
         trialIndex++;
         if (trialIndex < trials.length) {
+            fixationCross.style.display = "block"; // ここで再表示
             showFixationAndPlayVideoP();
         } else {
             mainInstructionScreen.style.display = "block";
+            mainInstructionButton.style.display = "block"; // ボタンを表示
         }
     }
-
     //本番試行用のnextTrial
     function nextTrial() {
         trialIndex++;
         if (trialIndex < trials.length) {
+            fixationCross.style.display = "block"; // ここで再表示
             showFixationAndPlayVideo();
         } else {
             endExperiment();
