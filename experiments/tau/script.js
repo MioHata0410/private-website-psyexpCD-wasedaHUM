@@ -137,18 +137,41 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
      
-    //本番試行playVideo
-    function playVideo() {        
-        stimulusVideo.src = `videos/${trials[trialIndex]}`;
-        stimulusVideo.load();
-        stimulusVideo.play();
-        startTime = Date.now();
+    // //本番試行playVideo
+    // function playVideo() {        
+    //     stimulusVideo.src = `videos/${trials[trialIndex]}`;
+    //     stimulusVideo.load();
+    //     stimulusVideo.play();
+    //     startTime = Date.now();
         
-        document.removeEventListener("keydown", handleKeyPress); // ← 重複を防ぐ
+    //     document.removeEventListener("keydown", handleKeyPress); // ← 重複を防ぐ
+    //     document.addEventListener("keydown", handleKeyPress);
+    //     trialTimeout = setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
+    // }
+    function playVideo() {
+        console.log("Playing video:", trials[trialIndex]);  // どの動画が選ばれているか
+        stimulusVideo.src = `videos/${trials[trialIndex]}`;
+        console.log("Video source set to:", stimulusVideo.src);
+    
+        stimulusVideo.load();
+        stimulusVideo.addEventListener("loadeddata", () => {
+            console.log("Video loaded successfully.");
+        });
+
+        stimulusVideo.play().then(() => {
+            console.log("Video is playing.");
+        }).catch(error => {
+            console.error("Error playing video:", error);
+        });
+
+        startTime = Date.now();
+        document.removeEventListener("keydown", handleKeyPress); 
         document.addEventListener("keydown", handleKeyPress);
-        trialTimeout = setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
+        console.log("Key event added");
+
+        trialTimeout = setTimeout(nextTrial, 14000);
     }
-   
+
     function nextTrial() {
         trialIndex++;
         if (trialIndex < trials.length) {
