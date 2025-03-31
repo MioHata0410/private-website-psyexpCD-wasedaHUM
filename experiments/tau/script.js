@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const startScreen = document.getElementById("start-screen");
     const instructionScreen = document.getElementById("instruction-screen");
+    const mainInstructionScreen = document.getElementById("main-instruction-screen");
+    const practiceScreen = document.getElementById("practice-screen");
     const experimentScreen = document.getElementById("experiment-screen");
     const fixationCross = document.getElementById("fixation-cross");
     const stimulusVideo = document.getElementById("stimulus-video");
@@ -41,13 +43,18 @@ document.addEventListener("DOMContentLoaded", () => {
         showFixationAndPlayVideo();
     }
 
+    instructionButton.addEventListener("click", () => {
+        mainInstructionScreen.style.display = "none";
+        startExperiment();
+    });
+    
     function showFixationAndPlayVideo() {
         experimentScreen.style.display = "block";
         fixationCross.style.display = "block";
         setTimeout(() => {
             fixationCross.style.display = "none";
             playVideo();
-        }, 1000);
+        }, 2000);
     }
 
     function playVideo() {
