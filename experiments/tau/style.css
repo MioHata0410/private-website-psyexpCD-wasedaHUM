@@ -19,17 +19,8 @@ body, html {
     align-items: center;
     background-color: black;
 }
-/* 
-/* 画面全体にフィットさせるためのスタイル */
-#experiment-screen {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
- */
+
+
 /* 十字の中央表示 */
 #fixation-cross {
     position: fixed;
