@@ -50,6 +50,13 @@ document.addEventListener("DOMContentLoaded", () => {
         startExperiment();
     });
     
+    function startExperiment() {
+        trials = shuffleArray(videoNames);
+        trialIndex = 0;
+        responseTimes = [];
+        showFixationAndPlayVideo();
+    }
+    
     function showFixationAndPlayVideo() {
         experimentScreen.style.display = "block";
         fixationCross.style.display = "block";
@@ -57,13 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
             fixationCross.style.display = "none";
             playVideo();
         }, 2000);
-    }
-
-    function startExperiment() {
-        trials = shuffleArray([...videoNames]);
-        trialIndex = 0;
-        responseTimes = [];
-        showFixationAndPlayVideo();
     }
 
     function playVideo() {
