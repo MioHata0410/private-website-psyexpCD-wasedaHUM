@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const practiceScreen = document.getElementById("practice-screen");
     const experimentScreen = document.getElementById("experiment-screen");
     const fixationCross = document.getElementById("fixation-cross");
+    const stimulusVideoP = document.getElementById("stimulus-videoP");
     const stimulusVideo = document.getElementById("stimulus-video");
     const participantNameInput = document.getElementById("participant-name");
     const startButton = document.getElementById("start-button");
@@ -79,9 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
     
     //練習試行playVideo
     function playVideoP() {        
-        stimulusVideo.src = `videos/${trialsP[trialIndexP]}`;
-        stimulusVideo.load();
-        stimulusVideo.play();
+        stimulusVideoP.src = `videos/${trialsP[trialIndexP]}`;
+        stimulusVideoP.load();
+        stimulusVideoP.play();
         startTimeP = Date.now();
 
         document.removeEventListener("keydown", handleKeyPressP); // ← 重複を防ぐ
