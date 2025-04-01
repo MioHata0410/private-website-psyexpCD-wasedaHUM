@@ -33,7 +33,7 @@ body, html {
     display: none;
 }
 
-/* 動画を中央に配置 */
+/* /* 動画を中央に配置 */
 #stimulus-video {
     position: fixed;
     left: 50%;
@@ -42,7 +42,7 @@ body, html {
     width: 80vw;
     height: auto;
     max-height: 80vh;
-}
+} */
 
 #instruction-screen {
     color: white;
