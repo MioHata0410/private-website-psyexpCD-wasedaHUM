@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let responseTimes = [];
 
     let startTime;
+    let startTimeP;
     let trialTimeout;
     let trialTimeoutP; // 追加
 
@@ -69,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function handleKeyPressP(event) {
         if (event.code === "Space") {
             clearTimeout(trialTimeoutP); // タイムアウトをクリア
-            let responseTimeP = Date.now() - startTime;
+            let responseTimeP = Date.now() - startTimeP;
             responseTimesP.push({ trial: trialsP[trialIndexP], time: responseTimeP });
             document.removeEventListener("keydown", handleKeyPressP);
             nextTrialP();
@@ -81,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         stimulusVideo.src = `videos/${trialsP[trialIndexP]}`;
         stimulusVideo.load();
         stimulusVideo.play();
-        startTime = Date.now();
+        startTimeP = Date.now();
 
         document.removeEventListener("keydown", handleKeyPressP); // ← 重複を防ぐ
         document.addEventListener("keydown", handleKeyPressP);
@@ -130,47 +131,47 @@ document.addEventListener("DOMContentLoaded", () => {
     function handleKeyPress(event) {
         if (event.code === "Space") {
             clearTimeout(trialTimeout); // タイムアウトをクリア
-            let responseTime = Date.now() - startTime;
+            let responseTime = Date.now() - startTimeP;
             responseTimes.push({ trial: trials[trialIndex], time: responseTime });
             document.removeEventListener("keydown", handleKeyPress);
             nextTrial();
         }
     }
      
-    // //本番試行playVideo
-    // function playVideo() {        
-    //     stimulusVideo.src = `videos/${trials[trialIndex]}`;
-    //     stimulusVideo.load();
-    //     stimulusVideo.play();
-    //     startTime = Date.now();
-        
-    //     document.removeEventListener("keydown", handleKeyPress); // ← 重複を防ぐ
-    //     document.addEventListener("keydown", handleKeyPress);
-    //     trialTimeout = setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
-    // }
-    function playVideo() {
-        console.log("Playing video:", trials[trialIndex]);  // どの動画が選ばれているか
+    //本番試行playVideo
+    function playVideo() {        
         stimulusVideo.src = `videos/${trials[trialIndex]}`;
-        console.log("Video source set to:", stimulusVideo.src);
-    
         stimulusVideo.load();
-        stimulusVideo.addEventListener("loadeddata", () => {
-            console.log("Video loaded successfully.");
-        });
-
-        stimulusVideo.play().then(() => {
-            console.log("Video is playing.");
-        }).catch(error => {
-            console.error("Error playing video:", error);
-        });
-
+        stimulusVideo.play();
         startTime = Date.now();
-        document.removeEventListener("keydown", handleKeyPress); 
+        
+        document.removeEventListener("keydown", handleKeyPress); // ← 重複を防ぐ
         document.addEventListener("keydown", handleKeyPress);
-        console.log("Key event added");
-
-        trialTimeout = setTimeout(nextTrial, 14000);
+        trialTimeout = setTimeout(nextTrial, 14000); // 最大14秒で次の試行へ
     }
+    // function playVideo() {
+    //     console.log("Playing video:", trials[trialIndex]);  // どの動画が選ばれているか
+    //     stimulusVideo.src = `videos/${trials[trialIndex]}`;
+    //     console.log("Video source set to:", stimulusVideo.src);
+    
+    //     stimulusVideo.load();
+    //     stimulusVideo.addEventListener("loadeddata", () => {
+    //         console.log("Video loaded successfully.");
+    //     });
+
+    //     stimulusVideo.play().then(() => {
+    //         console.log("Video is playing.");
+    //     }).catch(error => {
+    //         console.error("Error playing video:", error);
+    //     });
+
+    //     startTime = Date.now();
+    //     document.removeEventListener("keydown", handleKeyPress); 
+    //     document.addEventListener("keydown", handleKeyPress);
+    //     console.log("Key event added");
+
+    //     trialTimeout = setTimeout(nextTrial, 14000);
+    // }
 
     function nextTrial() {
         trialIndex++;
